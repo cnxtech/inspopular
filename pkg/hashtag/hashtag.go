@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"sync"
 )
+
+type List []*hashtag
 
 type hashtag struct {
 	tag   string
@@ -14,13 +17,34 @@ type hashtag struct {
 	posts int
 }
 
-var instaURL = "https://www.instagram.com/explore/tags/"
+const instaURL = "https://www.instagram.com/explore/tags/"
 
-func New(tag string) *hashtag {
-	return &hashtag{tag: tag, url: instaURL + tag}
+func CreateList(tags []string) *List {
+	var w sync.WaitGroup
+	var list List
+
+	for _, t := range tags {
+		list = append(list, newhashtag(t))
+	}
+
+	w.Add(len(tags))
+	for i := range list {
+		go func(i int) {
+			defer w.Done()
+			list[i].popularity()
+		}(i)
+	}
+
+	w.Wait()
+	return &list
 }
 
-func (h *hashtag) Popularity() {
+func newhashtag(tag string) *hashtag {
+	h := &hashtag{tag: tag, url: instaURL + tag}
+	return h
+}
+
+func (h *hashtag) popularity() {
 	resp, err := http.Get(h.url)
 
 	if err != nil {
