@@ -11,10 +11,9 @@ func main() {
 	flag.Parse()
 	tags := flag.Args()
 
-	for _, t := range tags {
-		h := hashtag.New(t)
-		h.Popularity()
+	l := hashtag.CreateList(tags)
 
-		fmt.Printf("%+v\n", h)
+	for _, item := range *l {
+		fmt.Printf("%+v\n", *item)
 	}
 }
