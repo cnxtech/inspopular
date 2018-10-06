@@ -1,12 +1,15 @@
 package hashtag
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strconv"
 	"sync"
+	"text/tabwriter"
 )
 
 type List []*hashtag
@@ -31,7 +34,9 @@ func CreateList(tags []string) *List {
 	for i := range list {
 		go func(i int) {
 			defer w.Done()
-			list[i].popularity()
+			if err := list[i].popularity(); err != nil {
+				log.Println(err)
+			}
 		}(i)
 	}
 
@@ -39,16 +44,34 @@ func CreateList(tags []string) *List {
 	return &list
 }
 
+func (l *List) Print() {
+	const format = "%v\t%v\t%v\t\n"
+	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 8, 2, ' ', 0)
+	fmt.Fprintf(tw, format, "Hashtag", "URL", "Posts")
+	fmt.Fprintf(tw, format, "-------", "---", "-----")
+
+	fmt.Println()
+	for _, item := range *l {
+		fmt.Fprintf(tw, format, item.tag, item.url, item.posts)
+	}
+	tw.Flush()
+}
+
 func newhashtag(tag string) *hashtag {
 	h := &hashtag{tag: tag, url: instaURL + tag}
 	return h
 }
 
-func (h *hashtag) popularity() {
+func (h *hashtag) popularity() error {
 	resp, err := http.Get(h.url)
 
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if resp.StatusCode == http.StatusNotFound {
+		err := fmt.Errorf("got %v at %s", http.StatusNotFound, h.url)
+		return err
 	}
 
 	defer resp.Body.Close()
@@ -70,4 +93,5 @@ func (h *hashtag) popularity() {
 	}
 
 	h.posts = popularity
+	return nil
 }
