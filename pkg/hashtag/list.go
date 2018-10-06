@@ -44,3 +44,7 @@ func (l *List) Print() {
 	}
 	tw.Flush()
 }
+
+func (l List) Len() int           { return len(l) }
+func (l List) Less(i, j int) bool { return l[i].posts > l[j].posts }
+func (l List) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
