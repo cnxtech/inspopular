@@ -42,9 +42,20 @@ func (l *List) Print() {
 	for _, item := range *l {
 		fmt.Fprintf(tw, format, item.tag, item.url, item.posts)
 	}
+	fmt.Println()
 	tw.Flush()
 }
 
-func (l List) Len() int           { return len(l) }
-func (l List) Less(i, j int) bool { return l[i].posts > l[j].posts }
-func (l List) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
+type OrderedList []*hashtag
+
+func (ol OrderedList) Len() int {
+	return len(ol)
+}
+
+func (ol OrderedList) Less(i, j int) bool {
+	return ol[i].posts > ol[j].posts
+}
+
+func (ol OrderedList) Swap(i, j int) {
+	ol[i], ol[j] = ol[j], ol[i]
+}

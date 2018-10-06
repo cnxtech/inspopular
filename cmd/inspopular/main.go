@@ -15,7 +15,7 @@ func main() {
 	l := hashtag.CreateList(tags)
 
 	if *nOrder {
-		sort.Sort(l)
+		sort.Sort(hashtag.OrderedList(*l))
 	}
 
 	l.Print()
