@@ -19,4 +19,5 @@ func main() {
 	}
 
 	l.Print()
+	l.PrintHashtags()
 }

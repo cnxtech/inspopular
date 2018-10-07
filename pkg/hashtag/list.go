@@ -52,6 +52,16 @@ func (l *List) Print() {
 	tw.Flush()
 }
 
+// PrintHashtags method of the List type prints the hashtags
+// within the List with the '#' added.
+func (l *List) PrintHashtags() {
+	fmt.Println()
+	for _, item := range *l {
+		fmt.Printf("%v ", "#"+item.tag)
+	}
+	fmt.Println()
+}
+
 // OrderedList type is a slice of *hashtag that
 // implements the sort interface.
 type OrderedList []*hashtag
