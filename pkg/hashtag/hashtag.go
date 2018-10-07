@@ -1,3 +1,5 @@
+// Package hashtag is a simple utility
+// to get the popularity of different hashtags at Instagram.
 package hashtag
 
 import (
