@@ -19,7 +19,7 @@ func CreateList(tags []string) *List {
 	var list List
 
 	for _, t := range tags {
-		list = append(list, newhashtag(t))
+		list = append(list, newHashtag(t))
 	}
 
 	w.Add(len(tags))

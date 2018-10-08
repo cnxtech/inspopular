@@ -19,7 +19,7 @@ type hashtag struct {
 
 const instaURL = "https://www.instagram.com/explore/tags/"
 
-func newhashtag(tag string) *hashtag {
+func newHashtag(tag string) *hashtag {
 	h := &hashtag{tag: tag, url: instaURL + tag}
 	return h
 }
