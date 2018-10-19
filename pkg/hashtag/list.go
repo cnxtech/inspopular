@@ -1,9 +1,9 @@
 package hashtag
 
 import (
+	"bytes"
 	"fmt"
 	"log"
-	"os"
 	"sync"
 	"text/tabwriter"
 )
@@ -36,30 +36,29 @@ func CreateList(tags []string) *List {
 	return &list
 }
 
-// Print method of the List type provides a pretty format
-// to print the results.
-func (l *List) Print() {
+// String is a method of the List type to satisfy
+// the stringer interface.
+func (l *List) String() string {
+	var out bytes.Buffer
+
 	const format = "%v\t%v\t%v\t\n"
-	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 4, ' ', 0)
+	tw := new(tabwriter.Writer).Init(&out, 0, 4, 4, ' ', 0)
 	fmt.Fprintf(tw, format, "Hashtag", "URL", "Posts")
 	fmt.Fprintf(tw, format, "-------", "---", "-----")
 
-	fmt.Println()
 	for _, item := range *l {
 		fmt.Fprintf(tw, format, item.tag, item.url, item.posts)
 	}
-	fmt.Println()
-	tw.Flush()
-}
 
-// PrintHashtags method of the List type prints the hashtags
-// within the List with the '#' added.
-func (l *List) PrintHashtags() {
-	fmt.Println()
+	tw.Flush()
+	out.WriteString("\n")
+
 	for _, item := range *l {
-		fmt.Printf("%v ", "#"+item.tag)
+		h := fmt.Sprintf("#%s ", item.tag)
+		out.WriteString(h)
 	}
-	fmt.Println()
+
+	return out.String()
 }
 
 // OrderedList type is a slice of *hashtag that

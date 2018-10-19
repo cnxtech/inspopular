@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"sort"
 
 	"github.com/danielkvist/inspopular/pkg/hashtag"
@@ -18,6 +19,5 @@ func main() {
 		sort.Sort(hashtag.OrderedList(*l))
 	}
 
-	l.Print()
-	l.PrintHashtags()
+	fmt.Println(l)
 }
