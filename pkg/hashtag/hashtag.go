@@ -14,17 +14,17 @@ import (
 type hashtag struct {
 	tag   string
 	url   string
-	posts int
+	posts int64
 }
 
-const instaURL = "https://www.instagram.com/explore/tags/"
-
-func newHashtag(tag string) *hashtag {
-	h := &hashtag{tag: tag, url: instaURL + tag}
-	return h
+func newHashtag(tag, url string) *hashtag {
+	return &hashtag{
+		tag: tag,
+		url: url,
+	}
 }
 
-func (h *hashtag) popularity() error {
+func (h *hashtag) fetch() error {
 	resp, err := http.Get(h.url)
 
 	if err != nil {
@@ -44,9 +44,9 @@ func (h *hashtag) popularity() error {
 		log.Fatal(err)
 	}
 
-	reCount := regexp.MustCompile(`"count":\d+`)
-	rePosts := regexp.MustCompile("[0-9]+")
-	posts := rePosts.Find(reCount.Find(body))
+	regCount := regexp.MustCompile(".?count.?: ?\\d+")
+	regPosts := regexp.MustCompile("[0-9]+")
+	posts := regPosts.Find(regCount.Find(body))
 
 	popularity, err := strconv.Atoi(string(posts))
 
@@ -54,6 +54,6 @@ func (h *hashtag) popularity() error {
 		log.Fatal(err)
 	}
 
-	h.posts = popularity
+	h.posts = int64(popularity)
 	return nil
 }
