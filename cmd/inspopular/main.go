@@ -9,11 +9,13 @@ import (
 )
 
 func main() {
-	nOrder := flag.Bool("n", true, "ordered by popularity. By default is true")
+	const instaURL = "https://www.instagram.com/explore/tags/"
+
+	nOrder := flag.Bool("n", true, "sort results by popularity. By default is true.")
 	flag.Parse()
 
 	tags := flag.Args()
-	l := hashtag.CreateList(tags)
+	l := hashtag.CreateList(tags, instaURL)
 
 	if *nOrder {
 		sort.Sort(hashtag.OrderedList(*l))

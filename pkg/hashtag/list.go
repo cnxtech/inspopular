@@ -14,25 +14,28 @@ type List []*hashtag
 // CreateList is a method of the List type to create a new List
 // with the items contained in the slice that receives as parameter
 // and and to obtain concurrently the popularity of each item.
-func CreateList(tags []string) *List {
+func CreateList(tags []string, url string) *List {
 	var w sync.WaitGroup
 	var list List
 
-	for _, t := range tags {
-		list = append(list, newHashtag(t))
+	list = make([]*hashtag, len(tags))
+
+	for i, t := range tags {
+		list[i] = newHashtag(t, url+t)
 	}
 
 	w.Add(len(tags))
-	for i := range list {
-		go func(i int) {
+	for _, h := range list {
+		go func(h *hashtag) {
 			defer w.Done()
-			if err := list[i].popularity(); err != nil {
+			if err := h.fetch(); err != nil {
 				log.Println(err)
 			}
-		}(i)
+		}(h)
 	}
 
 	w.Wait()
+
 	return &list
 }
 
