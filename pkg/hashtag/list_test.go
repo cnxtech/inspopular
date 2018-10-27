@@ -2,7 +2,6 @@ package hashtag
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -56,15 +55,15 @@ func TestCreateList(t *testing.T) {
 		listItem := (*l)[i]
 
 		if tt.tag != listItem.tag {
-			log.Fatalf("expected tag %q posts. got=%q", tt.tag, listItem.tag)
+			t.Fatalf("expected tag %q posts. got=%q", tt.tag, listItem.tag)
 		}
 
 		if tt.url != listItem.url {
-			log.Fatalf("in tag %q expected %s as URL. got=%s", tt.tag, tt.url, listItem.url)
+			t.Fatalf("in tag %q expected %s as URL. got=%s", tt.tag, tt.url, listItem.url)
 		}
 
 		if tt.posts != listItem.posts {
-			log.Fatalf("in tag %q expected %v posts. got=%v", tt.tag, tt.posts, listItem.posts)
+			t.Fatalf("in tag %q expected %v posts. got=%v", tt.tag, tt.posts, listItem.posts)
 		}
 	}
 }
