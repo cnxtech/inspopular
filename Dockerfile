@@ -1,4 +1,4 @@
-FROM golang:1.11.1 AS build
+FROM golang:1.11.2 AS build
 WORKDIR /src
 COPY cmd/inspopular/main.go .
 RUN go get -d && CGO_ENABLED=0 GOOS=linux go build -o inspopular main.go
