@@ -19,9 +19,8 @@ func CreateList(tags []string, url string) *List {
 	var list List
 
 	list = make([]*hashtag, len(tags))
-
 	for i, t := range tags {
-		list[i] = newHashtag(t, url+t)
+		list[i] = newHashtag(t, url)
 	}
 
 	w.Add(len(tags))
@@ -35,7 +34,6 @@ func CreateList(tags []string, url string) *List {
 	}
 
 	w.Wait()
-
 	return &list
 }
 
