@@ -21,3 +21,6 @@
 # Go Patch
 /vendor/
 /Godeps/
+
+# Pprof analysis
+*.prof
