@@ -20,40 +20,47 @@ type hashtag struct {
 func newHashtag(tag, url string) *hashtag {
 	return &hashtag{
 		tag: tag,
-		url: url,
+		url: url + tag,
 	}
 }
 
-func (h *hashtag) fetch() error {
-	resp, err := http.Get(h.url)
+// FIXME:
+var regCount = regexp.MustCompile(".?count.?: ?\\d+")
+var regPosts = regexp.MustCompile("[0-9]+")
 
+func (h *hashtag) fetch() error {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", h.url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if resp.StatusCode == http.StatusNotFound {
-		err := fmt.Errorf("got %v at %s", http.StatusNotFound, h.url)
-		return err
+	resp, err := client.Do(req)
+	if checkBadStatus(resp.StatusCode) {
+		return fmt.Errorf("got %v at %s", resp.StatusCode, h.url)
 	}
 
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("%v", err)
 	}
 
-	regCount := regexp.MustCompile(".?count.?: ?\\d+")
-	regPosts := regexp.MustCompile("[0-9]+")
 	posts := regPosts.Find(regCount.Find(body))
-
 	popularity, err := strconv.Atoi(string(posts))
-
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("%v", err)
 	}
 
 	h.posts = int64(popularity)
 	return nil
+}
+
+func checkBadStatus(sc int) bool {
+	if sc != 200 {
+		return true
+	}
+
+	return false
 }
