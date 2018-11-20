@@ -23,13 +23,17 @@ func CreateList(tags []string, url string) *List {
 		list[i] = newHashtag(t, url)
 	}
 
+	get := fetch()
+
 	w.Add(len(tags))
 	for _, h := range list {
 		go func(h *hashtag) {
 			defer w.Done()
-			if err := h.fetch(); err != nil {
+			posts, err := get(h.url)
+			if err != nil {
 				log.Println(err)
 			}
+			h.posts = posts
 		}(h)
 	}
 

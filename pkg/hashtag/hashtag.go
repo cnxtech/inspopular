@@ -24,41 +24,41 @@ func newHashtag(tag, url string) *hashtag {
 	}
 }
 
-// FIXME:
-var regCount = regexp.MustCompile(".?count.?: ?\\d+")
-var regPosts = regexp.MustCompile("[0-9]+")
+func fetch() func(string) (int64, error) {
+	regCount := regexp.MustCompile(".?count.?: ?\\d+")
+	regPosts := regexp.MustCompile("[0-9]+")
 
-func (h *hashtag) fetch() error {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", h.url, nil)
-	if err != nil {
-		log.Fatal(err)
+	return func(url string) (int64, error) {
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		resp, err := client.Do(req)
+		if checkBadStatus(resp.StatusCode) {
+			return 0, fmt.Errorf("got %v at %s", resp.StatusCode, url)
+		}
+
+		defer resp.Body.Close()
+
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return 0, fmt.Errorf("%v", err)
+		}
+
+		posts := regPosts.Find(regCount.Find(body))
+		popularity, err := strconv.Atoi(string(posts))
+		if err != nil {
+			return 0, fmt.Errorf("%v", err)
+		}
+
+		return int64(popularity), nil
 	}
-
-	resp, err := client.Do(req)
-	if checkBadStatus(resp.StatusCode) {
-		return fmt.Errorf("got %v at %s", resp.StatusCode, h.url)
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
-	posts := regPosts.Find(regCount.Find(body))
-	popularity, err := strconv.Atoi(string(posts))
-	if err != nil {
-		return fmt.Errorf("%v", err)
-	}
-
-	h.posts = int64(popularity)
-	return nil
 }
 
 func checkBadStatus(sc int) bool {
-	if sc != 200 {
+	if sc != http.StatusOK {
 		return true
 	}
 
