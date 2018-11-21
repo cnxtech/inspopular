@@ -14,7 +14,7 @@ func TestCreateList(t *testing.T) {
 	tests := []struct {
 		tag   string
 		url   string
-		posts int64
+		posts int
 	}{
 		{
 			tag:   "golang",
@@ -33,7 +33,7 @@ func TestCreateList(t *testing.T) {
 		hashtags[i] = tests[i].tag
 	}
 
-	l := CreateList(hashtags, ts.URL+"/")
+	l := Create(hashtags, ts.URL+"/")
 	for i, tt := range tests {
 		listItem := (*l)[i]
 
@@ -51,14 +51,14 @@ func TestCreateList(t *testing.T) {
 	}
 }
 
-func BenchmarkCreatrList(b *testing.B) {
+func BenchmarkCreate(b *testing.B) {
 	ts := httptest.NewServer(http.HandlerFunc(testHandler))
 	defer ts.Close()
 
 	url := ts.URL + "/"
 	hashtags := []string{"go", "golang", "docker", "cat", "pet"}
 	for i := 0; i < b.N; i++ {
-		CreateList(hashtags, url)
+		Create(hashtags, url)
 	}
 }
 

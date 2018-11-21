@@ -14,7 +14,7 @@ import (
 type hashtag struct {
 	tag   string
 	url   string
-	posts int64
+	posts int
 }
 
 func newHashtag(tag, url string) *hashtag {
@@ -24,11 +24,11 @@ func newHashtag(tag, url string) *hashtag {
 	}
 }
 
-func fetch() func(string) (int64, error) {
+func fetch() func(string) (int, error) {
 	regCount := regexp.MustCompile(".?count.?: ?\\d+")
 	regPosts := regexp.MustCompile("[0-9]+")
 
-	return func(url string) (int64, error) {
+	return func(url string) (int, error) {
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
@@ -53,7 +53,7 @@ func fetch() func(string) (int64, error) {
 			return 0, fmt.Errorf("%v", err)
 		}
 
-		return int64(popularity), nil
+		return popularity, nil
 	}
 }
 

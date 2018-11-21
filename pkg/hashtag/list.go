@@ -8,13 +8,12 @@ import (
 	"text/tabwriter"
 )
 
-// List type is a slice of *hashtag.
+// List is a slice of *hashtag.
 type List []*hashtag
 
-// CreateList is a method of the List type to create a new List
-// with the items contained in the slice that receives as parameter
-// and and to obtain concurrently the popularity of each item.
-func CreateList(tags []string, url string) *List {
+// Create creates a new List of *hashtags
+// and fetch the popularity of each one.
+func Create(tags []string, url string) *List {
 	var w sync.WaitGroup
 	var list List
 
