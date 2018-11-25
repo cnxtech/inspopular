@@ -5,7 +5,6 @@ package hashtag
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -32,25 +31,25 @@ func fetch() func(string) (int, error) {
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
-			log.Fatal(err)
+			return 0, fmt.Errorf("error at creating new request: %v", err)
 		}
 
 		resp, err := client.Do(req)
 		if checkBadStatus(resp.StatusCode) {
-			return 0, fmt.Errorf("got %v at %s", resp.StatusCode, url)
+			return 0, fmt.Errorf("got %v at url %s", resp.StatusCode, url)
 		}
 
 		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return 0, fmt.Errorf("%v", err)
+			return 0, fmt.Errorf("error at reading the response body: %v", err)
 		}
 
 		posts := regPosts.Find(regCount.Find(body))
 		popularity, err := strconv.Atoi(string(posts))
 		if err != nil {
-			return 0, fmt.Errorf("%v", err)
+			return 0, fmt.Errorf("error at converting the number of posts from string to an int: %v", err)
 		}
 
 		return popularity, nil
