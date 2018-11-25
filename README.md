@@ -12,7 +12,7 @@ $ ./inspopular go golang dev developer
 
 The output of the command above would be something like this:
 
-```
+```output
 Hashtag      URL                                                 Posts
 -------      ---                                                 -----
 go           https://www.instagram.com/explore/tags/go           14818638
@@ -23,23 +23,23 @@ golang       https://www.instagram.com/explore/tags/golang       11694
 #go #developer #dev #golang
 ```
 
-As you can see the results are sorted by popularity. You can change this by using the flag ```-n```.
+As you can see the results are sorted by popularity. You can change this by using the flag ```-s```.
 
-```
-$ ./inspopular -n=false go golang dev developer
+```shell
+$ ./inspopular -s=false go golang dev developer
 ```
 
 Or
 
-```
-$ ./inspopular -n="false" go golang dev developer
+```shell
+$ ./inspopular -s="false" go golang dev developer
 ```
 
 ## Get & Run
 
 First of all you need to have the Go programming language installed. Then:
 
-```
+```shell
 $ go get github.com/danielkvist/inspopular
 ```
 
@@ -47,12 +47,12 @@ $ go get github.com/danielkvist/inspopular
 
 Once the project has been downloaded. You only need to execute the following command into it.
 
-```
+```shell
 $ go build /cmd/inspopular/main.go
 ```
 
 You should also be able to install it with the following command:
 
-```
+```shell
 $ go install /cmd/inspopular/main.go
 ```
