@@ -51,6 +51,32 @@ func TestCreateList(t *testing.T) {
 	}
 }
 
+func TestRmDups(t *testing.T) {
+	tests := []struct {
+		in  []string
+		out []string
+	}{
+		{
+			[]string{"go"},
+			[]string{"go"},
+		},
+		{
+			[]string{"go", "go"},
+			[]string{"go"},
+		},
+		{
+			[]string{"go", "go", "golang", "docker"},
+			[]string{"go", "golang", "docker"},
+		},
+	}
+
+	for _, tt := range tests {
+		if r := rmDups(tt.in); len(r) != len(tt.out) {
+			t.Errorf("expected %v elements but got %v", len(tt.out), len(r))
+		}
+	}
+}
+
 func BenchmarkCreate(b *testing.B) {
 	ts := httptest.NewServer(http.HandlerFunc(testHandler))
 	defer ts.Close()

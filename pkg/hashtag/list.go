@@ -3,7 +3,6 @@ package hashtag
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"sync"
 	"text/tabwriter"
 )
@@ -17,6 +16,7 @@ func Create(tags []string, url string) *List {
 	var w sync.WaitGroup
 	var list List
 
+	tags = rmDups(tags)
 	list = make([]*hashtag, len(tags))
 	for i, t := range tags {
 		list[i] = newHashtag(t, url)
@@ -30,7 +30,7 @@ func Create(tags []string, url string) *List {
 			defer w.Done()
 			posts, err := get(h.url)
 			if err != nil {
-				log.Println(err)
+				fmt.Printf("%v\n", err)
 			}
 			h.posts = posts
 		}(h)
@@ -38,6 +38,20 @@ func Create(tags []string, url string) *List {
 
 	w.Wait()
 	return &list
+}
+
+func rmDups(s []string) []string {
+	set := make(map[string]struct{})
+	r := []string{}
+
+	for _, item := range s {
+		if _, ok := set[item]; !ok {
+			set[item] = struct{}{}
+			r = append(r, item)
+		}
+	}
+
+	return r
 }
 
 // String is a method of the List type to satisfy
